@@ -179,64 +179,103 @@
  *                 $ref: '#/components/schemas/Note'
  */
 
-import express from 'express';
-import { 
-  getNotes, 
-  createNote, 
-  getNoteById, 
-  updateNote, 
-  deleteNote, 
-  searchNotes 
-} from '../controllers/noteController.js';
-import { protect } from '../middleware/authMiddleware.js';
-import multer from 'multer';
-import { check } from 'express-validator';
+// import express from 'express';
+// import { 
+//   getNotes, 
+//   createNote, 
+//   getNoteById, 
+//   updateNote, 
+//   deleteNote, 
+//   searchNotes 
+// } from '../controllers/noteController.js';
+// import { protect } from '../middleware/authMiddleware.js';
+// import multer from 'multer';
+// import { check } from 'express-validator';
 
-// Configure Multer storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Files are saved in the 'uploads/' directory
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
+// // Configure Multer storage
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'uploads/'); // Files are saved in the 'uploads/' directory
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, Date.now() + '-' + file.originalname);
+//   }
+// });
 
-// Configure Multer to accept audio and image files
-const upload = multer({
-  storage: storage,
-  fileFilter: function (req, file, cb) {
-    if (file.mimetype.startsWith("audio/") || file.mimetype.startsWith("image/")) {
-      cb(null, true);
-    } else {
-      cb(new Error("Only audio and image files are allowed"), false);
-    }
-  }
-});
+// // Configure Multer to accept audio and image files
+// const upload = multer({
+//   storage: storage,
+//   fileFilter: function (req, file, cb) {
+//     if (file.mimetype.startsWith("audio/") || file.mimetype.startsWith("image/")) {
+//       cb(null, true);
+//     } else {
+//       cb(new Error("Only audio and image files are allowed"), false);
+//     }
+//   }
+// });
+
+// const router = express.Router();
+
+// // Routes
+// router.route('/')
+//   .get(protect, getNotes)
+//   .post(
+//     protect,
+//     upload.fields([
+//       { name: 'audio', maxCount: 1 },
+//       { name: 'image', maxCount: 1 }
+//     ]),
+//     [
+//       check('title').notEmpty().withMessage('Title is required').trim().escape(),
+//       check('content').notEmpty().withMessage('Content is required').trim().escape()
+//     ],
+//     createNote
+//   );
+
+// router.route('/:id')
+//   .get(protect, getNoteById)
+//   .put(protect, updateNote)
+//   .delete(protect, deleteNote);
+
+// router.get('/search', protect, searchNotes);
+
+// export default router;
+
+
+import express from "express";
+import {
+  getNotes,
+  createNote,
+  getNoteById,
+  updateNote,
+  deleteNote,
+  searchNotes,
+} from "../controllers/noteController.js";
+import { protect } from "../middleware/authMiddleware.js";
+import { check } from "express-validator";
+import upload from "../utils/upload.js"; // Import Multer configuration
 
 const router = express.Router();
 
 // Routes
-router.route('/')
+router
+  .route("/")
   .get(protect, getNotes)
   .post(
     protect,
     upload.fields([
-      { name: 'audio', maxCount: 1 },
-      { name: 'image', maxCount: 1 }
+      { name: "audio", maxCount: 1 },
+      { name: "image", maxCount: 1 },
     ]),
     [
-      check('title').notEmpty().withMessage('Title is required').trim().escape(),
-      check('content').notEmpty().withMessage('Content is required').trim().escape()
+      check("title").notEmpty().withMessage("Title is required").trim().escape(),
+      check("content").notEmpty().withMessage("Content is required").trim().escape(),
     ],
     createNote
   );
 
-router.route('/:id')
-  .get(protect, getNoteById)
-  .put(protect, updateNote)
-  .delete(protect, deleteNote);
+router.route("/:id").get(protect, getNoteById).put(protect, updateNote).delete(protect, deleteNote);
 
-router.get('/search', protect, searchNotes);
+router.get("/search", protect, searchNotes);
 
 export default router;
