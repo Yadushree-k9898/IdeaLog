@@ -1,10 +1,13 @@
 // import React, { useState } from "react";
 // import { useNavigate } from "react-router-dom";
-// import { loginUser } from "../api/authApi";
-// import { saveToken } from "../utils/authUtils";
+// import { registerUser } from "../api/authApi";
 
-// const Login = () => {
-//   const [formData, setFormData] = useState({ email: "", password: "" });
+// const Signup = () => {
+//   const [formData, setFormData] = useState({
+//     name: "",
+//     email: "",
+//     password: "",
+//   });
 //   const [error, setError] = useState("");
 //   const navigate = useNavigate();
 
@@ -15,19 +18,27 @@
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     try {
-//       const data = await loginUser(formData);
-//       saveToken(data.token);
-//       navigate("/dashboard");
+//       await registerUser(formData);
+//       navigate("/login");
 //     } catch (err) {
-//       setError("Invalid credentials. Please try again.");
+//       setError("Registration failed. Please try again.");
 //     }
 //   };
 
 //   return (
 //     <div className="flex items-center justify-center h-screen">
 //       <form onSubmit={handleSubmit} className="p-6 bg-white shadow-md rounded-md">
-//         <h2 className="text-2xl mb-4">Login</h2>
+//         <h2 className="text-2xl mb-4">Sign Up</h2>
 //         {error && <p className="text-red-500">{error}</p>}
+//         <input
+//           type="text"
+//           name="name"
+//           placeholder="Name"
+//           value={formData.name}
+//           onChange={handleChange}
+//           required
+//           className="w-full mb-2 p-2 border rounded"
+//         />
 //         <input
 //           type="email"
 //           name="email"
@@ -46,24 +57,27 @@
 //           required
 //           className="w-full mb-2 p-2 border rounded"
 //         />
-//         <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
-//           Login
+//         <button type="submit" className="w-full bg-green-500 text-white p-2 rounded">
+//           Sign Up
 //         </button>
 //       </form>
 //     </div>
 //   );
 // };
 
-// export default Login;
+// export default Signup;
 
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../api/authApi";
-import { saveToken } from "../utils/authUtils";
+import { registerUser } from "../api/authApi";
 
-const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+const Signup = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -74,11 +88,10 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = await loginUser(formData);
-      saveToken(data.token);
-      navigate("/dashboard");
+      await registerUser(formData);
+      navigate("/login");
     } catch (err) {
-      setError("Invalid credentials. Please try again.");
+      setError("Registration failed. Please try again.");
     }
   };
 
@@ -95,9 +108,18 @@ const Login = () => {
 
       <div className="flex-1 flex items-center justify-center p-4">
         <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Welcome back</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Create your account</h2>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full p-2 border border-gray-200 rounded-lg bg-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-colors"
+          />
           <input
             type="email"
             name="email"
@@ -121,7 +143,7 @@ const Login = () => {
             type="submit" 
             className="w-full p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
           >
-            Log In
+            Sign Up
           </button>
         </form>
       </div>
@@ -129,4 +151,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

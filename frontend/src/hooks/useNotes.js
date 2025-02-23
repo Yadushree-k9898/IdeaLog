@@ -1,4 +1,16 @@
-import { useContext } from "react";
-import { NotesContext } from "../contexts/NotesContext";
+import { useEffect, useState } from "react";
+import { getNotes } from "@/api/notesApi";
 
-export const useNotes = () => useContext(NotesContext);
+const useNotes = (token) => {
+  const [notes, setNotes] = useState([]);
+
+  useEffect(() => {
+    if (token) {
+      getNotes(token).then(setNotes);
+    }
+  }, [token]);
+
+  return notes;
+};
+
+export default useNotes;
