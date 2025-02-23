@@ -1,70 +1,156 @@
 
+// import React, { useState, useRef } from "react";
+// import { Mic } from "lucide-react";
+
+// const Recorder = ({ onUpdate }) => {
+//   const [recording, setRecording] = useState(false);
+//   const [transcript, setTranscript] = useState("");
+//   const recognitionRef = useRef(null);
+//   const mediaRecorderRef = useRef(null);
+//   const audioChunksRef = useRef([]);
+
+//   const startRecording = () => {
+//     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//     if (!SpeechRecognition) {
+//       alert("Your browser does not support speech recognition.");
+//       return;
+//     }
+
+//     // Initialize Speech Recognition
+//     const recognition = new SpeechRecognition();
+//     recognition.continuous = true;
+//     recognition.interimResults = true;
+//     recognition.lang = "en-US";
+
+//     recognition.onresult = (event) => {
+//       let newTranscript = "";
+//       for (let i = event.resultIndex; i < event.results.length; i++) {
+//         newTranscript += event.results[i][0].transcript + " ";
+//       }
+//       setTranscript(newTranscript.trim());
+//       if (onUpdate) onUpdate({ transcript: newTranscript });
+//     };
+
+//     recognition.onerror = (event) => console.error("Speech recognition error:", event.error);
+//     recognitionRef.current = recognition;
+//     recognition.start();
+
+//     // Start Audio Recording
+//     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+//       const mediaRecorder = new MediaRecorder(stream);
+//       mediaRecorderRef.current = mediaRecorder;
+//       audioChunksRef.current = [];
+
+//       mediaRecorder.ondataavailable = (event) => {
+//         if (event.data.size > 0) audioChunksRef.current.push(event.data);
+//       };
+
+//       mediaRecorder.start();
+
+//       mediaRecorder.onstop = () => {
+//         const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+//         if (onUpdate) onUpdate({ transcript, audioBlob });
+//       };
+//     });
+
+//     setRecording(true);
+//   };
+
+//   const stopRecording = () => {
+//     if (recognitionRef.current) recognitionRef.current.stop();
+//     if (mediaRecorderRef.current) mediaRecorderRef.current.stop();
+//     setRecording(false);
+//   };
+
+//   return (
+//     <div className="flex items-center gap-2">
+//       <button
+//         onClick={recording ? stopRecording : startRecording}
+//         className={`p-2 rounded-full transition-all ${recording ? "bg-red-500 text-white" : "bg-gray-200"}`}
+//       >
+//         <Mic size={20} />
+//       </button>
+//     </div>
+//   );
+// };
+
+// export default Recorder;
+
+
+
 import React, { useState, useRef } from "react";
 import { Mic } from "lucide-react";
 
-const Recorder = ({ onTranscription }) => {
+const Recorder = ({ onUpdate }) => {
   const [recording, setRecording] = useState(false);
+  const [transcript, setTranscript] = useState("");
   const recognitionRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const stopTimeoutRef = useRef(null);
 
   const startRecording = () => {
-    // Check if browser supports Speech Recognition
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       alert("Your browser does not support speech recognition.");
       return;
     }
 
-    // Initialize Speech Recognition API
     const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.continuous = true;
+    recognition.interimResults = true;
     recognition.lang = "en-US";
 
-    recognition.onstart = () => {
-      setRecording(true);
-    };
-
     recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      console.log("Transcribed Text:", transcript);
-      if (onTranscription) {
-        onTranscription(transcript); // Pass text to parent
+      let newTranscript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        newTranscript += event.results[i][0].transcript + " ";
       }
+      setTranscript(newTranscript.trim());
+      if (onUpdate) onUpdate({ transcript: newTranscript });
     };
 
-    recognition.onerror = (event) => {
-      console.error("Speech Recognition Error:", event.error);
-    };
-
-    recognition.onend = () => {
-      setRecording(false);
-    };
-
+    recognition.onerror = (event) => console.error("Speech recognition error:", event.error);
     recognitionRef.current = recognition;
     recognition.start();
+
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.start();
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+        if (onUpdate) onUpdate({ transcript, audioBlob });
+      };
+    });
+
+    // Stop automatically after 10 minutes (600,000ms)
+    stopTimeoutRef.current = setTimeout(() => stopRecording(), 600000);
+
+    setRecording(true);
   };
 
   const stopRecording = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      setRecording(false);
-    }
+    if (recognitionRef.current) recognitionRef.current.stop();
+    if (mediaRecorderRef.current) mediaRecorderRef.current.stop();
+    if (stopTimeoutRef.current) clearTimeout(stopTimeoutRef.current);
+    setRecording(false);
   };
 
   return (
-    <div className="relative flex justify-end items-center mt-4">
-      <button
-        onClick={recording ? stopRecording : startRecording}
-        className={`flex items-center gap-2 px-6 py-3 rounded-full transition-all shadow-md ${
-          recording ? "bg-red-500 text-white" : "bg-white border border-gray-300"
-        }`}
-      >
-        <Mic size={20} />
-        {recording ? "Stop Recording" : "Start Recording"}
-      </button>
-    </div>
+    <button
+      onClick={recording ? stopRecording : startRecording}
+      className={`p-2 rounded-full transition-all ${recording ? "bg-red-500 text-white" : "bg-gray-200"}`}
+    >
+      <Mic size={20} />
+    </button>
   );
 };
 
