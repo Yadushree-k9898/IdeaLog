@@ -34,24 +34,41 @@ const Dashboard = () => {
     }
   }, [dispatch, token]);
 
-  const handleUpdate = ({ transcript, audioBlob }) => {
-    setNewNote((prev) => ({
-      ...prev,
-      content: transcript || prev.content,
-      audio: audioBlob ? URL.createObjectURL(audioBlob) : prev.audio,
-      createdAt: new Date().toISOString(),
-    }));
-  };
-
+  
   const handleSave = () => {
-    if (!newNote.content && !newNote.audio) {
-      alert("Please enter text or record audio!");
+    if (!newNote.content.trim()) {
+      alert("Please enter a note before saving!");
       return;
     }
-
-    dispatch(createNote({ noteData: newNote, token }));
-    setNewNote({ title: "", content: "", audio: null, id: null });
+  
+    const noteData = {
+      title: "New Note", // Optional title
+      content: newNote.content,
+      audio: newNote.audio || null, // Ensure audio is optional
+      createdAt: new Date().toISOString(),
+    };
+  
+    dispatch(createNote({ noteData, token }))
+      .unwrap()
+      .then(() => {
+        setNewNote({ title: "", content: "", audio: null }); // Reset input field
+      })
+      .catch((error) => {
+        console.error("Error saving note:", error);
+        alert("Failed to save note.");
+      });
   };
+  
+
+
+  //   if (!newNote.content && !newNote.audio) {
+  //     alert("Please enter text or record audio!");
+  //     return;
+  //   }
+
+  //   dispatch(createNote({ noteData: newNote, token }));
+  //   setNewNote({ title: "", content: "", audio: null, id: null });
+  // };
 
   const handleEdit = (note) => {
     setEditingNote(note);
@@ -84,6 +101,21 @@ const Dashboard = () => {
     setIsModalOpen(false);
     setEditingNote(null);
   };
+
+  const handleUpdate = ({ transcript, audioBlob }) => {
+    setNewNote((prev) => {
+      if (prev.audio) {
+        URL.revokeObjectURL(prev.audio); // Clean up previous audio URL
+      }
+      return {
+        ...prev,
+        content: transcript || prev.content,
+        audio: audioBlob ? URL.createObjectURL(audioBlob) : prev.audio,
+        createdAt: new Date().toISOString(),
+      };
+    });
+  };
+  
 
   return (
     <div className="min-h-screen bg-white">
