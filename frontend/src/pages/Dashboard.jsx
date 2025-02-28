@@ -1,18 +1,30 @@
 
-
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Plus } from "lucide-react";
 import Recorder from "../components/Recorder";
+import NoteCard from "../components/NoteCard";
+import NoteModal from "../components/NoteModal";
+import { fetchNotes, createNote } from "../features/notes/notesThunks"; // Adjust path as needed
 
 const Dashboard = () => {
-  const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState({ content: "", audio: null, createdAt: "" });
+  const dispatch = useDispatch();
+  const { notes, loading, error } = useSelector((state) => state.notes);
+  const { user } = useSelector((state) => state.auth);
+  // Retrieve token from auth state or fallback to localStorage
+  const token = user?.token || localStorage.getItem("token");
 
-  // Load saved notes from localStorage
+  // Log token to ensure it's valid
+  console.log("Token from auth:", token);
+
+  const [newNote, setNewNote] = useState({ content: "", audio: null, createdAt: "", id: null });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
-    const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
-    setNotes(savedNotes);
-  }, []);
+    if (token) {
+      dispatch(fetchNotes(token));
+    }
+  }, [dispatch, token]);
 
   const handleUpdate = ({ transcript, audioBlob }) => {
     setNewNote((prev) => ({
@@ -28,12 +40,28 @@ const Dashboard = () => {
       alert("Please enter text or record audio!");
       return;
     }
+    // Dispatch createNote with noteData and token
+    dispatch(createNote({ noteData: newNote, token }));
+    setNewNote({ content: "", audio: null, createdAt: "", id: null });
+  };
 
-    const updatedNotes = [...notes, newNote];
-    setNotes(updatedNotes);
-    localStorage.setItem("notes", JSON.stringify(updatedNotes)); // Save to localStorage
+  const handleEdit = (note) => {
+    console.log("Edit note:", note);
+    // Example: Open an edit modal pre-filled with note data.
+  };
 
-    setNewNote({ content: "", audio: null, createdAt: "" });
+  const handleDelete = (noteId) => {
+    console.log("Delete note:", noteId);
+    // Dispatch deleteNote thunk if available.
+  };
+
+  const handleManualSave = (manualNote) => {
+    const newManualNote = {
+      ...manualNote,
+      createdAt: new Date().toISOString(),
+    };
+    dispatch(createNote({ noteData: newManualNote, token }));
+    setIsModalOpen(false);
   };
 
   return (
@@ -41,6 +69,12 @@ const Dashboard = () => {
       <header className="p-4 bg-white shadow-sm sticky top-0">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <h1 className="text-xl font-semibold text-purple-600">AI Notes</h1>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Manual Note
+          </button>
         </div>
       </header>
 
@@ -59,22 +93,28 @@ const Dashboard = () => {
           </button>
         </div>
 
+        {loading && <p>Loading notes...</p>}
+        {error && <p>Error: {error}</p>}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {notes.map((note, index) => (
-            <div key={index} className="bg-white shadow-md rounded-lg p-4">
-              <p className="text-gray-500 text-sm">{new Date(note.createdAt).toLocaleString()}</p>
-              <h3 className="font-semibold">{note.content || "Untitled Note"}</h3>
-              {note.audio && (
-                <audio controls className="w-full mt-2">
-                  <source src={note.audio} type="audio/wav" />
-                </audio>
-              )}
-            </div>
+          {notes.map((note) => (
+            <NoteCard key={note.id} note={note} onEdit={handleEdit} onDelete={handleDelete} />
           ))}
         </div>
       </main>
+
+      <NoteModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleManualSave}
+        initialData={null}
+      />
     </div>
   );
 };
 
 export default Dashboard;
+
+
+
+
