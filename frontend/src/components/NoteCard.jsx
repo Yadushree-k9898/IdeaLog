@@ -1,3 +1,5 @@
+
+
 import PropTypes from "prop-types";
 import { Pencil, Trash2 } from "lucide-react";
 
@@ -20,13 +22,13 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={() => onEdit(note)}
-            className="text-sm text-gray-600 hover:text-purple-600 transition-colors flex items-center gap-1"
+            className="text-sm text-gray-600 hover:text-purple-600 flex items-center gap-1"
           >
             <Pencil size={16} /> Edit
           </button>
           <button
-            onClick={() => onDelete(note.id)}
-            className="text-sm text-gray-600 hover:text-red-600 transition-colors flex items-center gap-1"
+            onClick={() => onDelete(note._id)}
+            className="text-sm text-gray-600 hover:text-red-600 flex items-center gap-1"
           >
             <Trash2 size={16} /> Delete
           </button>
@@ -35,6 +37,7 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
     </div>
   );
 };
+
 NoteCard.propTypes = {
   note: PropTypes.shape({
     title: PropTypes.string,
@@ -42,6 +45,7 @@ NoteCard.propTypes = {
     audio: PropTypes.string,
     createdAt: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
+    _id: PropTypes.string,
   }).isRequired,
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
