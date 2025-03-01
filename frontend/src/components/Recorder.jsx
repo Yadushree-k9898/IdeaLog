@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { Mic } from "lucide-react";

@@ -1,5 +1,6 @@
 
-import React from "react";
+
+import PropTypes from 'prop-types';
 
 const Sidebar = ({ onAddNote }) => {
   return (
@@ -29,4 +30,9 @@ const Sidebar = ({ onAddNote }) => {
   );
 };
 
+Sidebar.propTypes = {
+  onAddNote: PropTypes.func.isRequired,
+};
+
 export default Sidebar;
+
