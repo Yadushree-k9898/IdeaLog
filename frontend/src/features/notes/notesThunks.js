@@ -1,33 +1,43 @@
-
-
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 // Fetch all notes
-export const fetchNotes = createAsyncThunk("notes/fetchNotes", async (token, { rejectWithValue }) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/notes`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    return rejectWithValue(error.response?.data?.message || "Failed to fetch notes");
+export const fetchNotes = createAsyncThunk(
+  "notes/fetchNotes",
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/notes`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch notes"
+      );
+    }
   }
-});
+);
 
 // Create a new note
-export const createNote = createAsyncThunk("notes/createNote", async ({ noteData, token }, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}/notes`, noteData, {
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    return rejectWithValue(error.response?.data || "Failed to create note");
+export const createNote = createAsyncThunk(
+  "notes/createNote",
+  async ({ noteData, token }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/notes`, noteData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Failed to create note");
+    }
   }
-});
+);
 
 export const updateNote = createAsyncThunk(
   "notes/updateNote",
@@ -35,9 +45,16 @@ export const updateNote = createAsyncThunk(
     try {
       console.log(`🟡 Updating note with ID: ${noteId}`, noteData);
 
-      const response = await axios.put(`${API_BASE_URL}/notes/${noteId}`, noteData, {
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.put(
+        `${API_BASE_URL}/notes/${noteId}`,
+        noteData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       console.log("✅ Update response:", response.data);
       return response.data;
@@ -47,8 +64,6 @@ export const updateNote = createAsyncThunk(
     }
   }
 );
-
-
 
 export const deleteNote = createAsyncThunk(
   "notes/deleteNote",
@@ -66,4 +81,3 @@ export const deleteNote = createAsyncThunk(
     }
   }
 );
-
