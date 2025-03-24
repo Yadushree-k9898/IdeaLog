@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Mic, FileText, ArrowRight, Moon, Sun, Save, List } from "lucide-react";
 
-function HomePage() {
+function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
@@ -220,4 +220,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default Home;
