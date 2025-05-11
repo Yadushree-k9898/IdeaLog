@@ -9,7 +9,7 @@ export const fetchNotes = createAsyncThunk(
   "notes/fetchNotes",
   async (token, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/notes`, {
+      const response = await axios.get(`${API_BASE_URL}/api/notes`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
