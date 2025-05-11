@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Mic, FileText, ArrowRight, Moon, Sun, Save, List } from "lucide-react";
+import {Link} from "react-router-dom";
 
 function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
