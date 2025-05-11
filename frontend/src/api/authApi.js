@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL + "/auth"; // Ensure it dynamically picks the backend URL
+const API_URL = import.meta.env.VITE_API_URL + "/api/auth"; // Ensure it dynamically picks the backend URL
 
 // Register User
 export const registerUser = async (userData) => {

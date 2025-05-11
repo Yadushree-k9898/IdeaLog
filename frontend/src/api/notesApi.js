@@ -2,7 +2,7 @@
 
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL + "/notes"; // Ensure this is set in .env
+const API_URL = import.meta.env.VITE_API_URL + "/api/notes"; 
 
 // Function to create headers for authenticated requests
 const getHeaders = (token, isFormData = false) => ({
