@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Plus, FileEdit, MoonStar, SunMedium, Menu, X, Search } from "lucide-react"

@@ -26,7 +26,7 @@ export const createNote = createAsyncThunk(
   "notes/createNote",
   async ({ noteData, token }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/notes`, noteData, {
+      const response = await axios.post(`${API_BASE_URL}/api/notes`, noteData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -46,7 +46,7 @@ export const updateNote = createAsyncThunk(
       console.log(`🟡 Updating note with ID: ${noteId}`, noteData);
 
       const response = await axios.put(
-        `${API_BASE_URL}/notes/${noteId}`,
+        `${API_BASE_URL}/api/notes/${noteId}`,
         noteData,
         {
           headers: {
@@ -69,7 +69,7 @@ export const deleteNote = createAsyncThunk(
   "notes/deleteNote",
   async ({ noteId, token }, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`${API_BASE_URL}/notes/${noteId}`, {
+      const response = await axios.delete(`${API_BASE_URL}/api/notes/${noteId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
