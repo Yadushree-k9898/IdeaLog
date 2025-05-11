@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Mic, FileText, ArrowRight, Moon, Sun, Save, List } from "lucide-react";
+import Login from "./Login";
+import Signup from "./Signup";
 
 function Home() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -36,13 +38,13 @@ function Home() {
                 href="#"
                 className={`px-4 py-2 rounded-md ${isDarkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"} transition-colors duration-200`}
               >
-                Login
+                <Login/>
               </a>
               <a
                 href="#"
                 className="px-4 py-2 rounded-md bg-purple-600 text-white hover:bg-purple-700 transition-colors duration-200"
               >
-                Sign Up
+                <Signup/>
               </a>
             </div>
           </div>
