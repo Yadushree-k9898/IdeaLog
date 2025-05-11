@@ -33,13 +33,13 @@ function Home() {
                 {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
               </button>
               <a
-                href="/login"
+                href="/api/login"
                 className={`px-4 py-2 rounded-md ${isDarkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-100 hover:bg-gray-200"} transition-colors duration-200`}
               >
                 Login
               </a>
               <a
-                href="/signup"
+                href="/api/signup"
                 className="px-4 py-2 rounded-md bg-purple-600 text-white hover:bg-purple-700 transition-colors duration-200"
               >
                 Sign Up
@@ -200,7 +200,7 @@ function Home() {
             through voice.
           </p>
           <a
-            href="/login"
+            href="/api/login"
             className="inline-flex items-center px-6 py-3 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors duration-200"
           >
             Try It Now <ArrowRight size={20} className="ml-2" />
